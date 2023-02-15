@@ -12,7 +12,8 @@ module Ex2
       parseInfoWarning,
       parse,
       initialize,
-      insert
+      insert,
+      build
     ) where
 
 -- import Control.Applicative
@@ -108,3 +109,16 @@ insert logmsg@(LogMessage _ ts _) (Node left logmsg'@(LogMessage _ ts' _) right)
   | ts <= ts' = Node (insert logmsg left) logmsg' right
   | otherwise = Node left logmsg' (insert logmsg right)
 insert _ _ = Leaf
+
+
+-- Exercise 3 Once we can insert a single LogMessage into a MessageTree, we can
+-- build a complete MessageTree from a list of messages. Specifically, define a
+-- function
+--   build :: [LogMessage] -> MessageTree
+-- which builds up a MessageTree containing the messages in the list, by
+-- successively inserting the messages into a MessageTree (beginning with a
+-- Leaf).
+
+build :: [LogMessage] -> MessageTree
+build []     = Leaf
+build (x:xs) = insert x (build xs)
