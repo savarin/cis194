@@ -13,7 +13,8 @@ module Ex2
       parse,
       initialize,
       insert,
-      build
+      build,
+      inOrder
     ) where
 
 -- import Control.Applicative
@@ -122,3 +123,14 @@ insert _ _ = Leaf
 build :: [LogMessage] -> MessageTree
 build []     = Leaf
 build (x:xs) = insert x (build xs)
+
+
+-- Exercise 4 Finally, define the function
+--   inOrder :: MessageTree -> [LogMessage]
+-- which takes a sorted MessageTree and produces a list of all the LogMessages
+-- it contains, sorted by timestamp from smallest to biggest (This is known as
+-- an in-order traversal of the MessageTree.)
+
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf                     = []
+inOrder (Node left logmsg right) = inOrder left ++ [logmsg] ++ inOrder right
