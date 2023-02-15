@@ -5,16 +5,17 @@ module Ex2
       TimeStamp,
       LogMessage,
       MessageTree,
-      testParse,
       parseInt,
       parseTimeStamp,
       parseMessage,
       parseError,
       parseInfoWarning,
-      parse
+      parse,
+      initialize,
+      insert
     ) where
 
-import Control.Applicative
+-- import Control.Applicative
 import Text.Read (readMaybe)
 
 data MessageType = Info
@@ -34,21 +35,21 @@ data MessageTree = Leaf
 
 -- | @testParse p n f@ tests the log file parser @p@ by running it
 --   on the first @n@ lines of file @f@.
-testParse :: (String -> [LogMessage])
-          -> Int
-          -> FilePath
-          -> IO [LogMessage]
-testParse parse n file = take n . parse <$> readFile file
+-- testParse :: (String -> [LogMessage])
+--           -> Int
+--           -> FilePath
+--           -> IO [LogMessage]
+-- testParse parse n file = take n . parse <$> readFile file
 
 -- | @testWhatWentWrong p w f@ tests the log file parser @p@ and
 --   warning message extractor @w@ by running them on the log file
 --   @f@.
-testWhatWentWrong :: (String -> [LogMessage])
-                  -> ([LogMessage] -> [String])
-                  -> FilePath
-                  -> IO [String]
-testWhatWentWrong parse whatWentWrong file
-  = whatWentWrong . parse <$> readFile file
+-- testWhatWentWrong :: (String -> [LogMessage])
+--                   -> ([LogMessage] -> [String])
+--                   -> FilePath
+--                   -> IO [String]
+-- testWhatWentWrong parse whatWentWrong file
+--   = whatWentWrong . parse <$> readFile file
 
 
 -- Exercise 1 The first step is figuring out how to parse an individual message.
@@ -85,3 +86,25 @@ parseInfoWarning _ _ msg = Unknown (unwords msg)
 
 parse :: String -> [LogMessage]
 parse = (map parseMessage) . lines
+
+
+-- Exercise 2 Define a function
+--   insert :: LogMessage -> MessageTree -> MessageTree
+-- which inserts a new LogMessage into an existing MessageTree, producing a new
+-- MessageTree. insert may assume that it is given a sorted MessageTree, and
+-- must produce a new sorted MessageTree containing the new LogMessage in
+-- addition to the contents of the original MessageTree.
+
+-- However, note that if insert is given a LogMessage which is Unknown, it
+-- should return the MessageTree unchanged.
+
+initialize :: MessageTree
+initialize = Leaf
+
+insert :: LogMessage -> MessageTree -> MessageTree
+insert (Unknown _) msgtree = msgtree
+insert logmsg Leaf = Node Leaf logmsg Leaf
+insert logmsg@(LogMessage _ ts _) (Node left logmsg'@(LogMessage _ ts' _) right)
+  | ts <= ts' = Node (insert logmsg left) logmsg' right
+  | otherwise = Node left logmsg' (insert logmsg right)
+insert _ _ = Leaf
