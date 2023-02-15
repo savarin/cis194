@@ -3,10 +3,19 @@
 module Ex2
     ( MessageType,
       TimeStamp,
-      parseMessage
+      LogMessage,
+      MessageTree,
+      testParse,
+      parseInt,
+      parseTimeStamp,
+      parseMessage,
+      parseError,
+      parseInfoWarning,
+      parse
     ) where
 
 import Control.Applicative
+import Text.Read (readMaybe)
 
 data MessageType = Info
                  | Warning
@@ -53,16 +62,26 @@ testWhatWentWrong parse whatWentWrong file
 
 parseMessage :: String -> LogMessage
 parseMessage s
-  | ("E" : x : y : zs) <- w = parseError (read x :: Int) (read y :: Int) zs
-  | ("I" : x : ys) <- w = parseInfoWarning Info (read x :: Int) ys
-  | ("W" : x : ys) <- w = parseInfoWarning Warning (read x :: Int) ys
+  | ("E" : x : y : zs) <- w = parseError (parseInt x) (parseTimeStamp y) zs
+  | ("I" : x : ys) <- w = parseInfoWarning Info (parseTimeStamp x) ys
+  | ("W" : x : ys) <- w = parseInfoWarning Warning (parseTimeStamp x) ys
   | otherwise = Unknown s
   where w = words s
 
-parseError :: Int -> Int -> [String] -> LogMessage
-parseError err ts msg = LogMessage (Error err) ts (unwords msg)
+parseInt :: String -> Maybe Int
+parseInt = readMaybe
 
-parseInfoWarning :: MessageType -> Int -> [String] -> LogMessage
-parseInfoWarning Info ts msg = LogMessage Info ts (unwords msg)
-parseInfoWarning Warning ts msg = LogMessage Warning ts (unwords msg)
+parseTimeStamp :: String -> Maybe TimeStamp
+parseTimeStamp = readMaybe
+
+parseError :: Maybe Int -> Maybe TimeStamp -> [String] -> LogMessage
+parseError (Just err) (Just ts) msg = LogMessage (Error err) ts (unwords msg)
+parseError _ _ msg = Unknown (unwords msg)
+
+parseInfoWarning :: MessageType -> Maybe TimeStamp -> [String] -> LogMessage
+parseInfoWarning Info (Just ts) msg = LogMessage Info ts (unwords msg)
+parseInfoWarning Warning (Just ts) msg = LogMessage Warning ts (unwords msg)
 parseInfoWarning _ _ msg = Unknown (unwords msg)
+
+parse :: String -> [LogMessage]
+parse = (map parseMessage) . lines
