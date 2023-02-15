@@ -1,6 +1,10 @@
 -- https://www.cis.upenn.edu/~cis1940/spring13/hw/02-ADTs.pdf
 
-module Log where
+module Ex2
+    ( MessageType,
+      TimeStamp,
+      parseMessage
+    ) where
 
 import Control.Applicative
 
@@ -36,3 +40,29 @@ testWhatWentWrong :: (String -> [LogMessage])
                   -> IO [String]
 testWhatWentWrong parse whatWentWrong file
   = whatWentWrong . parse <$> readFile file
+
+
+-- Exercise 1 The first step is figuring out how to parse an individual message.
+-- Define a function
+--   parseMessage :: String -> LogMessage
+-- which parses an individual line from the log file.
+
+-- parseMessage "E 2 562 help help" == LogMessage (Error 2) 562 "help help"
+-- parseMessage "I 29 la la la" == LogMessage Info 29 "la la la"
+-- parseMessage "This is not in the right format" == Unknown "This is not in the right format"
+
+parseMessage :: String -> LogMessage
+parseMessage s
+  | ("E" : x : y : zs) <- w = parseError (read x :: Int) (read y :: Int) zs
+  | ("I" : x : ys) <- w = parseInfoWarning Info (read x :: Int) ys
+  | ("W" : x : ys) <- w = parseInfoWarning Warning (read x :: Int) ys
+  | otherwise = Unknown s
+  where w = words s
+
+parseError :: Int -> Int -> [String] -> LogMessage
+parseError err ts msg = LogMessage (Error err) ts (unwords msg)
+
+parseInfoWarning :: MessageType -> Int -> [String] -> LogMessage
+parseInfoWarning Info ts msg = LogMessage Info ts (unwords msg)
+parseInfoWarning Warning ts msg = LogMessage Warning ts (unwords msg)
+parseInfoWarning _ _ msg = Unknown (unwords msg)

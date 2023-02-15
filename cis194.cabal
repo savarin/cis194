@@ -25,6 +25,8 @@ source-repository head
 
 library
   exposed-modules:
+      Ex1
+      Ex2
       Lib
   other-modules:
       Paths_cis194
