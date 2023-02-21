@@ -5,7 +5,9 @@ module Ex4
       fun2,
       seed,
       grow,
-      foldTree
+      foldTree,
+      xor,
+      map'
     ) where
 
 -- Exercise 1: Wholemeal programming
@@ -65,7 +67,7 @@ seed = Leaf
 
 countNodes :: Tree a -> Integer
 countNodes Leaf = 0
-countNodes (Node _ left x right) = (countNodes left) + 1 + (countNodes right)
+countNodes (Node _ left _ right) = (countNodes left) + 1 + (countNodes right)
 
 isBalanced :: Tree a -> Bool
 isBalanced Leaf = True
@@ -85,3 +87,27 @@ grow x (Node n left y right)
 
 foldTree :: [a] -> Tree a
 foldTree = foldr grow seed
+
+
+-- Exercise 3: More folds!
+
+-- 1. Implement a function
+--   xor :: [Bool] -> Bool
+-- which returns True if and only if there are an odd number of True values
+-- contained in the input list. It does not matter how many False values the
+-- input list contains. For example,
+--   xor [False, True, False] == True
+--   xor [False, True, False, False, True] == False
+
+-- Your solution must be implemented using a fold.
+
+-- 2. Implement map as a fold. That is, complete the definition
+--   map’ :: (a -> b) -> [a] -> [b]
+--   map’ f = foldr ...
+-- in such a way that map’ behaves identically to the standard map function.
+
+xor :: [Bool] -> Bool
+xor = odd . foldl (\acc x -> if x then acc + 1 else acc) 0
+
+map' :: (a -> b) -> [a] -> [b]
+map' f = foldl (\acc x -> acc ++ [f x]) []
