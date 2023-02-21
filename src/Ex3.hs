@@ -1,3 +1,5 @@
+-- https://www.cis.upenn.edu/~cis1940/spring13/hw/03-rec-poly.pdf
+
 module Ex3
     ( skips,
       localMaxima
@@ -23,9 +25,8 @@ module Ex3
 
 skips' :: Int -> [a] -> [a]
 skips' n x
-  | (z:zs) <- y     = [z] ++ skips' n zs
-  | [] <- y         = []
-  where y = drop n x
+  | (z:zs) <- drop n x = z : skips' n zs
+  | otherwise          = []
 
 skips :: [a] -> [[a]]
 skips x = [skips' n x | n <- [0 .. (length x - 1)]]
@@ -49,6 +50,6 @@ skips x = [skips' n x | n <- [0 .. (length x - 1)]]
 
 localMaxima :: [Integer] -> [Integer]
 localMaxima (x:y:z:zs)
-  | x < y && y > z = [y] ++ localMaxima (z:zs)
-  | otherwise      = [] ++ localMaxima (y:z:zs)
+  | x < y && y > z = y : localMaxima (z:zs)
+  | otherwise      = localMaxima (y:z:zs)
 localMaxima _ = []
