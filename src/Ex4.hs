@@ -32,7 +32,7 @@ module Ex4
 -- takeWhile. Look them up in the Prelude documentation to see what they do.
 
 fun1 :: [Integer] -> Integer
-fun1 = foldl (\acc x -> acc * (x - 2)) 1 . filter even
+fun1 = foldr (\x acc -> acc * (x - 2)) 1 . filter even
 
 fun2 :: Integer -> Integer
 fun2 = sum . filter even .takeWhile (>1) . iterate (\n -> if even n then div n 2 else 3 * n + 1)
@@ -107,7 +107,7 @@ foldTree = foldr grow seed
 -- in such a way that map’ behaves identically to the standard map function.
 
 xor :: [Bool] -> Bool
-xor = odd . foldl (\acc x -> if x then acc + 1 else acc) 0
+xor = odd . foldr (\x acc -> if x then acc + 1 else acc) 0
 
 map' :: (a -> b) -> [a] -> [b]
-map' f = foldl (\acc x -> acc ++ [f x]) []
+map' f = foldr (\x acc -> acc ++ [f x]) []
