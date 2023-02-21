@@ -27,6 +27,7 @@ library
   exposed-modules:
       Ex1
       Ex2
+      Ex3
       Lib
   other-modules:
       Paths_cis194
