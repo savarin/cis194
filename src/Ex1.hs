@@ -74,4 +74,4 @@ divisibleByTen :: Integer -> Bool
 divisibleByTen n = mod n 10 == 0
 
 validate :: Integer -> Bool
-validate = divisibleByTen. sumDigits . doubleEveryOther . toDigits
+validate = divisibleByTen . sumDigits . doubleEveryOther . toDigits
