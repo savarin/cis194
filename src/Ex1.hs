@@ -43,8 +43,8 @@ toDigits n = reverse (toDigitsRev n)
 
 doubleEveryOther' :: [Integer] -> [Integer]
 doubleEveryOther' []       = []
-doubleEveryOther' (x:[])   = [x]
-doubleEveryOther' (x:y:zs) = x : (2 * y) : doubleEveryOther' zs
+doubleEveryOther' (x : [])   = [x]
+doubleEveryOther' (x : y : zs) = x : (2 * y) : doubleEveryOther' zs
 
 doubleEveryOther :: [Integer] -> [Integer]
 doubleEveryOther = reverse . doubleEveryOther' . reverse

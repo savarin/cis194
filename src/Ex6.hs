@@ -3,7 +3,11 @@
 module Ex6
     ( fib,
       fibs1,
-      fibs2
+      fibs2,
+      streamToList,
+      streamRepeat,
+      streamMap,
+      streamFromSeed
     ) where
 
 
@@ -61,3 +65,33 @@ streamToList (Cons x xs) = x : (streamToList xs)
 
 instance Show a => Show (Stream a)
   where show = show . take 10 . streamToList
+
+
+-- Exercise 4
+-- Write a function
+--    streamRepeat :: a -> Stream a
+-- which generates a stream containing infinitely many copies of the given
+-- element.
+
+-- Write a function
+--   streamMap :: (a -> b) -> Stream a -> Stream b
+-- which applies a function to every element of a Stream.
+
+-- Write a function
+--   streamFromSeed :: (a -> a) -> a -> Stream a
+-- which generates a Stream from a “seed” of type a, which is the first element
+-- of the stream, and an “unfolding rule” of type a -> a which specifies how to
+-- transform the seed into a new seed, to be used for generating the rest of the
+-- stream.
+
+listToStream :: [a] -> Stream a
+listToStream (x : xs) = Cons x (listToStream xs)
+
+streamRepeat :: a -> Stream a
+streamRepeat = listToStream . repeat
+
+streamMap :: (a -> b) -> Stream a -> Stream b
+streamMap f (Cons x xs) = Cons (f x) (streamMap f xs)
+
+streamFromSeed :: (a -> a) -> a -> Stream a
+streamFromSeed f a = Cons a (streamMap f (streamFromSeed f a))
