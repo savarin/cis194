@@ -30,6 +30,7 @@ library
       Ex3
       Ex4
       Ex5
+      Ex6
       Lib
   other-modules:
       Paths_cis194
