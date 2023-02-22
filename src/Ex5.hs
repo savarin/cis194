@@ -3,7 +3,9 @@
 module Ex5
     ( ExprT (Lit, Add, Mul),
       eval,
-      evalStr
+      evalStr,
+      Expr (lit, add, mul),
+      reify
     ) where
 
 import Parser
@@ -51,3 +53,36 @@ eval (Mul (Lit n) (Lit m)) = n * m
 
 evalStr :: String -> Maybe Integer
 evalStr = (eval <$>) . parseExp Lit Add Mul
+
+
+-- Exercise 3
+-- Good news! Early customer feedback indicates that people really do love the
+-- interface! Unfortunately, there seems to be some disagreement over exactly
+-- how the calculator should go about its calculating business. The problem the
+-- software department (i.e. you) has is that while ExprT is nice, it is also
+-- rather inflexible, which makes catering to diverse demographics a bit clumsy.
+-- You decide to abstract away the properties of ExprT with a type class.
+
+-- Create a type class called Expr with three methods called lit, add, and mul
+-- which parallel the constructors of ExprT. Make an instance of Expr for the
+-- ExprT type, in such a way that
+--   mul (add (lit 2) (lit 3)) (lit 4) :: ExprT == Mul (Add (Lit 2) (Lit 3)) (Lit 4)
+
+-- Think carefully about what types lit, add, and mul should have. It may be
+-- helpful to consider the types of the ExprT constructors, which you can find
+-- out by typing (for example)
+--   *Calc> :t Lit
+-- at the ghci prompt.
+
+class Expr a where
+    lit :: Integer -> a
+    add :: a -> a -> a
+    mul :: a -> a -> a
+
+reify :: ExprT -> ExprT
+reify x = x
+
+instance Expr ExprT where
+    lit x   = Lit x
+    add x y = Add x y
+    mul x y = Mul x y
