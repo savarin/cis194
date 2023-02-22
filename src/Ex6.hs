@@ -35,3 +35,29 @@ fibs1 = map fib [0..]
 
 fibs2 :: [Integer]
 fibs2 = 0 : 1 : (zipWith (+) fibs2 (tail fibs2))
+
+
+-- Exercise 3
+-- Define a data type of polymorphic streams, Stream.
+
+-- Write a function to convert a Stream to an infinite list,
+--   streamToList :: Stream a -> [a]
+
+-- To test your Stream functions in the succeeding exercises, it will be useful
+-- to have an instance of Show for Streams. However, if you put deriving Show
+-- after your definition of Stream, as one usually does, the resulting instance
+-- will try to print an entire Stream — which, of course, will never finish.
+
+-- Instead, you should make your own instance of Show for Stream,
+--   instance Show a => Show (Stream a) where
+--      show ...
+-- which works by showing only some prefix of a stream (say, the first 20
+-- elements).
+
+data Stream a = Cons a (Stream a)
+
+streamToList :: Stream a -> [a]
+streamToList (Cons x xs) = x : (streamToList xs)
+
+instance Show a => Show (Stream a)
+  where show = show . take 10 . streamToList
