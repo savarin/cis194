@@ -14,9 +14,8 @@ module Ex6
     ) where
 
 
--- Exercise 1
--- Translate the above definition of Fibonacci numbers directly into a recursive
--- function definition of type
+-- Exercise 1 Translate the above definition of Fibonacci numbers directly into
+-- a recursive function definition of type
 --   fib :: Integer -> Integer
 -- so that fib n computes the nth Fibonacci number Fn.
 
@@ -32,9 +31,8 @@ fibs1 :: [Integer]
 fibs1 = map fib [0..]
 
 
--- Exercise 2
--- Your task for this exercise is to come up with more efficient implementation.
--- Specifically, define the infinite list
+-- Exercise 2 Your task for this exercise is to come up with more efficient
+-- implementation. Specifically, define the infinite list
 --   fibs2 :: [Integer]
 -- so that it has the same elements as fibs1, but computing the first n elements
 -- of fibs2 requires only O(n) addition operations. Be sure to use standard
@@ -44,8 +42,7 @@ fibs2 :: [Integer]
 fibs2 = 0 : 1 : (zipWith (+) fibs2 (tail fibs2))
 
 
--- Exercise 3
--- Define a data type of polymorphic streams, Stream.
+-- Exercise 3 Define a data type of polymorphic streams, Stream.
 
 -- Write a function to convert a Stream to an infinite list,
 --   streamToList :: Stream a -> [a]
@@ -70,8 +67,7 @@ instance Show a => Show (Stream a)
   where show = show . take 20 . streamToList
 
 
--- Exercise 4
--- Write a function
+-- Exercise 4 Write a function
 --    streamRepeat :: a -> Stream a
 -- which generates a stream containing infinitely many copies of the given
 -- element.
@@ -97,8 +93,7 @@ streamFromSeed :: (a -> a) -> a -> Stream a
 streamFromSeed f a = Cons a (streamMap f (streamFromSeed f a))
 
 
--- Exercise 5
--- Define the stream
+-- Exercise 5 Define the stream
 --   nats :: Stream Integer
 -- which contains the infinite list of natural numbers 0, 1, 2, ...
 

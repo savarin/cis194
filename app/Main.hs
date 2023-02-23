@@ -7,6 +7,7 @@ import Ex3
 import Ex4
 import Ex5
 import Ex6
+import Ex7
 
 main :: IO ()
 main = someFunc
