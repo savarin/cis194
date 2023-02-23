@@ -7,7 +7,10 @@ module Ex6
       streamToList,
       streamRepeat,
       streamMap,
-      streamFromSeed
+      streamFromSeed,
+      nats,
+      interleaveStreams,
+      ruler
     ) where
 
 
@@ -64,7 +67,7 @@ streamToList :: Stream a -> [a]
 streamToList (Cons x xs) = x : (streamToList xs)
 
 instance Show a => Show (Stream a)
-  where show = show . take 10 . streamToList
+  where show = show . take 20 . streamToList
 
 
 -- Exercise 4
@@ -84,14 +87,33 @@ instance Show a => Show (Stream a)
 -- transform the seed into a new seed, to be used for generating the rest of the
 -- stream.
 
-listToStream :: [a] -> Stream a
-listToStream (x : xs) = Cons x (listToStream xs)
-
 streamRepeat :: a -> Stream a
-streamRepeat = listToStream . repeat
+streamRepeat x = Cons x (streamRepeat x)
 
 streamMap :: (a -> b) -> Stream a -> Stream b
 streamMap f (Cons x xs) = Cons (f x) (streamMap f xs)
 
 streamFromSeed :: (a -> a) -> a -> Stream a
 streamFromSeed f a = Cons a (streamMap f (streamFromSeed f a))
+
+
+-- Exercise 5
+-- Define the stream
+--   nats :: Stream Integer
+-- which contains the infinite list of natural numbers 0, 1, 2, ...
+
+-- Define the stream
+--   ruler :: Stream Integer
+-- which corresponds to the ruler function 0,1,0,2,0,1,0,3,0,1,0,2,0,1,0,4,...
+-- where the nth element in the stream (assuming the first element corresponds
+-- to n = 1) is the largest power of 2 which evenly divides n.
+
+nats :: Stream Integer
+nats = streamFromSeed (\n -> n + 1) 0
+
+interleaveStreams :: Stream a -> Stream a -> Stream a
+interleaveStreams (Cons x xs) y= Cons x (interleaveStreams y xs)
+
+ruler :: Stream Integer
+ruler = generate 0
+  where generate n = interleaveStreams (streamRepeat n) (generate (n + 1))
