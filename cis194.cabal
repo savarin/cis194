@@ -27,6 +27,7 @@ library
   exposed-modules:
       Buffer
       Editor
+      Employee
       Ex1
       Ex2
       Ex3
@@ -34,6 +35,7 @@ library
       Ex5
       Ex6
       Ex7
+      Ex8
       Lib
       Parser
       Sized
@@ -45,6 +47,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , containers >=0.6
     , mtl >=2.2
   default-language: Haskell2010
 
@@ -58,6 +61,7 @@ executable cis194-exe
   build-depends:
       base >=4.7 && <5
     , cis194
+    , containers >=0.6
     , mtl >=2.2
   default-language: Haskell2010
 
@@ -72,5 +76,6 @@ test-suite cis194-test
   build-depends:
       base >=4.7 && <5
     , cis194
+    , containers >=0.6
     , mtl >=2.2
   default-language: Haskell2010
