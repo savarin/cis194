@@ -3,7 +3,9 @@
 
 module Ex8
     ( glCons,
-      moreFun
+      moreFun,
+      treeFold,
+      nextLevel
     ) where
 
 import Data.Tree
@@ -59,3 +61,20 @@ moreFun g1@(GL _ s1) g2@(GL _ s2)
 treeFold :: b -> (a -> [b] -> b) -> Tree a -> b
 treeFold e _ (Node _ []) = e
 treeFold e f (Node v c) = f v (map (treeFold e f) c)
+
+
+-- Exercise 3 Write a function
+--   nextLevel :: Employee -> [(GuestList, GuestList)]
+--                -> (GuestList, GuestList)
+
+-- which takes two arguments. The first is the “boss” of the current subtree
+-- (let’s call him Bob). The second argument is a list of the results for each
+-- subtree under Bob. Each result is a pair of GuestLists: the first GuestList
+-- in the pair is the best possible guest list with the boss of that subtree;
+-- the second is the best possible guest list without the boss of that subtree.
+-- nextLevel should then compute the overall best guest list that includes Bob,
+-- and the overall best guest list that doesn’t include Bob.
+
+nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
+nextLevel e@(Emp _ s) gs = foldr f (GL [e] s, mempty) gs
+  where f = (\(g1, g2) acc -> (fst acc <> g2, snd acc <> (moreFun g1 g2)))
