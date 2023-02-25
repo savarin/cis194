@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 -- https://www.seas.upenn.edu/~cis1940/spring13/hw/08-IO.pdf
 
 module Ex8
@@ -5,7 +6,9 @@ module Ex8
       moreFun
     ) where
 
+import Data.Tree
 import Employee
+
 
 -- Exercise 1 Now define the following tools for working with GuestLists:
 
@@ -39,3 +42,20 @@ moreFun :: GuestList -> GuestList -> GuestList
 moreFun g1@(GL _ s1) g2@(GL _ s2)
   | s1 >= s2  = g1
   | otherwise = g2
+
+
+-- Exercise 2 The Data.Tree module from the standard Haskell libraries defines
+-- the type of “rose trees”, where each node stores a data element and has any
+-- number of children (i.e. a list of subtrees):
+--   data Tree a = Node {
+--           rootLabel :: a,         -- label value
+--           subForest :: [Tree a]   -- zero or more child trees
+--       }
+
+-- Strangely, Data.Tree does not define a fold for this type! Rectify the
+-- situation by implementing
+--   treeFold :: ... -> Tree a -> b
+
+treeFold :: b -> (a -> [b] -> b) -> Tree a -> b
+treeFold e _ (Node _ []) = e
+treeFold e f (Node v c) = f v (map (treeFold e f) c)

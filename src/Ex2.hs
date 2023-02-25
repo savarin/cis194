@@ -17,7 +17,6 @@ module Ex2
       inOrder
     ) where
 
--- import Control.Applicative
 import Text.Read (readMaybe)
 
 data MessageType = Info
