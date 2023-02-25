@@ -5,7 +5,8 @@ module Ex8
     ( glCons,
       moreFun,
       treeFold,
-      nextLevel
+      nextLevel,
+      maxFun
     ) where
 
 import Data.Tree
@@ -41,9 +42,7 @@ glCons :: Employee -> GuestList -> GuestList
 glCons e@(Emp _ s) (GL es ss) = GL (e : es) (s + ss)
 
 moreFun :: GuestList -> GuestList -> GuestList
-moreFun g1@(GL _ s1) g2@(GL _ s2)
-  | s1 >= s2  = g1
-  | otherwise = g2
+moreFun g1 g2 = if g1 > g2 then g1 else g2
 
 
 -- Exercise 2 The Data.Tree module from the standard Haskell libraries defines
@@ -58,9 +57,8 @@ moreFun g1@(GL _ s1) g2@(GL _ s2)
 -- situation by implementing
 --   treeFold :: ... -> Tree a -> b
 
-treeFold :: b -> (a -> [b] -> b) -> Tree a -> b
-treeFold e _ (Node _ []) = e
-treeFold e f (Node v c) = f v (map (treeFold e f) c)
+treeFold :: (a -> [b] -> b) -> b -> Tree a -> b
+treeFold f e (Node v c) = f v (map (treeFold f e) c)
 
 
 -- Exercise 3 Write a function
@@ -78,3 +76,12 @@ treeFold e f (Node v c) = f v (map (treeFold e f) c)
 nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
 nextLevel e@(Emp _ s) gs = foldr f (GL [e] s, mempty) gs
   where f = (\(g1, g2) acc -> (fst acc <> g2, snd acc <> (moreFun g1 g2)))
+
+
+-- Exercise 4 Finally, put all of this together to define
+--   maxFun :: Tree Employee -> GuestList
+-- which takes a company hierarchy as input and outputs a fun-maximizing guest
+-- list. You can test your function on testCompany, provided in Employee.hs.
+
+maxFun :: Tree Employee -> GuestList
+maxFun t = uncurry moreFun (treeFold nextLevel (mempty, mempty) t)
