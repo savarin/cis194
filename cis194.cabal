@@ -25,10 +25,12 @@ source-repository head
 
 library
   exposed-modules:
+      AParser
       Buffer
       Editor
       Employee
       Ex1
+      Ex10
       Ex2
       Ex3
       Ex4
