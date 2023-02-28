@@ -2,6 +2,8 @@
 
 module Ex10
     ( abParser,
+      abParser_,
+      intPair
     ) where
 
 import AParser
@@ -42,3 +44,45 @@ instance Applicative Parser where
         Nothing -> Nothing
         Just (f, s') -> runParser (f <$> p2) s'
     )
+
+
+-- Exercise 3 We can also test your Applicative instance using other simple
+-- applications of functions to multiple parsers. You should implement each of
+-- the following exercises using the Applicative interface to put together
+-- simpler parsers into more complex ones. Do not implement them using the low
+-- -level definition of a Parser! In other words, pretend that you do not have
+-- access to the Parser constructor or even know how the Parser type is defined.
+
+-- Create a parser
+--   abParser :: Parser (Char, Char)
+-- which expects to see the characters ’a’ and ’b’ and returns them as a pair.
+-- That is,
+--   *AParser> runParser abParser "abcdef"
+--   Just ((’a’,’b’),"cdef")
+--   *AParser> runParser abParser "aebcdf"
+--   Nothing
+
+-- Now create a parser
+--   abParser_ :: Parser ()
+-- which acts in the same way as abParser but returns () instead of the
+-- characters ’a’ and ’b’.
+--   *AParser> runParser abParser_ "abcdef"
+--   Just ((),"cdef")
+--   *AParser> runParser abParser_ "aebcdf"
+--   Nothing
+
+-- Create a parser intPair which reads two integer values separated by a space
+-- and returns the integer values in a list. You should use the provided posInt
+-- to parse the integer values.
+--   *Parser> runParser intPair "12 34"
+--   Just ([12,34],"")
+
+abParser :: Parser (Char, Char)
+abParser = (,) <$> char 'a' <*> char 'b'
+
+abParser_ :: Parser ()
+abParser_ = const () <$> abParser
+
+intPair :: Parser [Integer]
+intPair = liftA3 f posInt (char ' ') posInt
+  where f a _ b = [a, b]
