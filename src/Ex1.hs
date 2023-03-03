@@ -5,7 +5,8 @@ module Ex1
       toDigits,
       doubleEveryOther,
       sumDigits,
-      validate
+      validate,
+      hanoi,
     ) where
 
 
@@ -24,10 +25,10 @@ module Ex1
 
 toDigitsRev :: Integer -> [Integer]
 toDigitsRev 0 = []
-toDigitsRev n = (mod n 10) : toDigitsRev (div n 10)
+toDigitsRev x = mod x 10 : toDigitsRev (div x 10)
 
 toDigits :: Integer -> [Integer]
-toDigits n = reverse (toDigitsRev n)
+toDigits = reverse . toDigitsRev
 
 
 -- Exercise 2 Once we have the digits in the proper order, we need to double
@@ -42,8 +43,8 @@ toDigits n = reverse (toDigitsRev n)
 -- Example: doubleEveryOther [1,2,3] == [1,4,3]
 
 doubleEveryOther' :: [Integer] -> [Integer]
-doubleEveryOther' []       = []
-doubleEveryOther' (x : [])   = [x]
+doubleEveryOther' []           = []
+doubleEveryOther' (x : [])     = [x]
 doubleEveryOther' (x : y : zs) = x : (2 * y) : doubleEveryOther' zs
 
 doubleEveryOther :: [Integer] -> [Integer]
@@ -58,8 +59,8 @@ doubleEveryOther = reverse . doubleEveryOther' . reverse
 -- Example: sumDigits [16,7,12,5] = 1 + 6 + 7 + 1 + 2 + 5 = 22
 
 sumDigits :: [Integer] -> Integer
-sumDigits [] = 0
-sumDigits (x:ys) = sum (toDigits x) + sumDigits ys
+sumDigits []       = 0
+sumDigits (x : xs) = sum (toDigits x) + sumDigits xs
 
 
 -- Exercise 4 Define the function
@@ -70,8 +71,24 @@ sumDigits (x:ys) = sum (toDigits x) + sumDigits ys
 -- Example: validate 4012888888881881 = True
 -- Example: validate 4012888888881882 = False
 
-divisibleByTen :: Integer -> Bool
-divisibleByTen n = mod n 10 == 0
-
 validate :: Integer -> Bool
-validate = divisibleByTen . sumDigits . doubleEveryOther . toDigits
+validate = (== 0) . (`mod` 10) . sumDigits . doubleEveryOther . toDigits
+
+
+-- Exercise 5 For this exercise, define a function hanoi with the following type:
+--   type Peg = String
+--   type Move = (Peg, Peg)
+--   hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
+
+-- Given the number of discs and names for the three pegs, hanoi should return a
+-- list of moves to be performed to move the stack of discs from the first peg
+-- to the second.
+
+type Peg = String
+type Move = (Peg, Peg)
+
+hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
+hanoi 0 _ _ _ = []
+hanoi 1 a b _ = [(a, b)]
+hanoi 2 a b c = [(a, c)] ++ hanoi 1 a b c ++ [(c, b)]
+hanoi n a b c = hanoi (n - 1) a c b ++ [(a, b)] ++ hanoi (n - 1) c b a
